@@ -5,13 +5,14 @@ SCENORA is a mobile-first social platform for movie and series lovers. The UI fo
 ## Local setup
 
 1. Install packages: `npm install`
-2. Copy `.env.example` to `.env.local` and add Turso, TMDB, and auth values.
-3. Generate migrations: `npm run db:generate`
-4. Apply migrations: `npm run db:migrate`
-5. Add development data: `npm run db:seed`
-6. Start: `npm run dev`
+2. Create a Supabase project and copy `.env.example` to `.env.local`.
+3. Paste `database/scenora.sql` into **Supabase Dashboard → SQL Editor** and run it once.
+4. In Supabase Auth URL Configuration, add `http://localhost:3000/**` and `https://emon095.github.io/Scenora/**` as redirect URLs.
+5. Start: `npm run dev`.
 
-Open [http://localhost:3000](http://localhost:3000). Without a TMDB key, the UI uses the clearly separated fixtures in `src/data/demo.ts`; the movie service is ready to fetch live TMDB data once configured.
+Open [http://localhost:3000](http://localhost:3000). Supabase stores authentication, profiles, posts, reviews, comments, loves, follows, notifications, media metadata, watchlists, and realtime Shoutbox messages. The public Supabase key is safe to expose because every user-owned table is protected with Row Level Security.
+
+The GitHub Pages build uses the browser Supabase client because GitHub Pages cannot execute Next.js middleware or server routes. `src/utils/supabase/server.ts` is ready for a future Node/Vercel deployment.
 
 ## Verification
 
