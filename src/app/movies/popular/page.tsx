@@ -1,3 +1,2 @@
-import { Shell } from "@/components/Shell";import { MovieList } from "@/components/MovieList";import { movies } from "@/data/demo";
-export default function Popular(){return <Shell back><h1 className="page-title">Most Popular <span className="orange">↗</span></h1><p className="subtitle">Top trending movies loved by the community</p><Filters/><MovieList items={[movies[1],movies[2],movies[0],movies[4],movies[5]]}/></Shell>}
-function Filters(){return <div className="tabs">{["All Time","This Week","This Month","This Year","Filter"].map((x,i)=><button className={`pill ${i===0?"active":""}`} key={x}>{x}</button>)}</div>}
+import { Shell } from "@/components/Shell";import { MovieDiscovery } from "@/components/MovieDiscovery";
+export default function Popular(){return <Shell back><MovieDiscovery action="popular" title="Most Popular 🔥" subtitle="Popular movies from the complete TMDB catalog" filters/></Shell>}

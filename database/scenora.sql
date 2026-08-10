@@ -2,6 +2,8 @@
 -- Paste this entire file into Supabase Dashboard > SQL Editor > New query > Run.
 
 create extension if not exists pgcrypto;
+create extension if not exists pg_cron;
+create extension if not exists pg_net;
 
 create table if not exists public.users (
   id uuid primary key references auth.users(id) on delete cascade,
@@ -421,3 +423,19 @@ insert into public.genres (name, slug) values
   ('Horror','horror'),('Mystery','mystery'),('Romance','romance'),('Sci-Fi','scifi'),
   ('Thriller','thriller'),('War','war'),('Western','western')
 on conflict (slug) do nothing;
+
+-- Warm the principal discovery caches every day at 03:15 UTC. The Edge
+-- Function also refreshes/cache-writes on every user request, so search and
+-- filtered discovery remain live between scheduled runs.
+select cron.unschedule(jobid) from cron.job where jobname = 'scenora-tmdb-daily-refresh';
+select cron.schedule(
+  'scenora-tmdb-daily-refresh',
+  '15 3 * * *',
+  $schedule$
+    select net.http_post(url := 'https://fiwcyteletygdkgparoz.supabase.co/functions/v1/tmdb-sync', headers := '{"Content-Type":"application/json","Authorization":"Bearer sb_publishable_bRakcI8CSMtelTn2sl4-qg_2wUZNj12"}'::jsonb, body := '{"action":"popular","page":1}'::jsonb);
+    select net.http_post(url := 'https://fiwcyteletygdkgparoz.supabase.co/functions/v1/tmdb-sync', headers := '{"Content-Type":"application/json","Authorization":"Bearer sb_publishable_bRakcI8CSMtelTn2sl4-qg_2wUZNj12"}'::jsonb, body := '{"action":"top_rated","page":1}'::jsonb);
+    select net.http_post(url := 'https://fiwcyteletygdkgparoz.supabase.co/functions/v1/tmdb-sync', headers := '{"Content-Type":"application/json","Authorization":"Bearer sb_publishable_bRakcI8CSMtelTn2sl4-qg_2wUZNj12"}'::jsonb, body := '{"action":"trending","page":1}'::jsonb);
+    select net.http_post(url := 'https://fiwcyteletygdkgparoz.supabase.co/functions/v1/tmdb-sync', headers := '{"Content-Type":"application/json","Authorization":"Bearer sb_publishable_bRakcI8CSMtelTn2sl4-qg_2wUZNj12"}'::jsonb, body := '{"action":"now_playing","page":1}'::jsonb);
+    select net.http_post(url := 'https://fiwcyteletygdkgparoz.supabase.co/functions/v1/tmdb-sync', headers := '{"Content-Type":"application/json","Authorization":"Bearer sb_publishable_bRakcI8CSMtelTn2sl4-qg_2wUZNj12"}'::jsonb, body := '{"action":"upcoming","page":1}'::jsonb);
+  $schedule$
+);

@@ -1,3 +1,2 @@
-import { Shell } from "@/components/Shell";import { MovieList } from "@/components/MovieList";import { movies } from "@/data/demo";
-export default function Rated(){return <Shell back><h1 className="page-title">Highest Rated <span className="orange">★</span></h1><p className="subtitle">Top movies with the highest ratings</p><Filters/><MovieList items={[movies[3],movies[4],movies[1],movies[2],movies[0]]}/></Shell>}
-function Filters(){return <div className="tabs">{["All Time","This Week","This Month","This Year","Filter"].map((x,i)=><button className={`pill ${i===0?"active":""}`} key={x}>{x}</button>)}</div>}
+import { Shell } from "@/components/Shell";import { MovieDiscovery } from "@/components/MovieDiscovery";
+export default function HighestRated(){return <Shell back><MovieDiscovery action="top_rated" title="Highest Rated ⭐" subtitle="Top-rated movies from every year" filters/></Shell>}

@@ -14,6 +14,19 @@ Open [http://localhost:3000](http://localhost:3000). Supabase stores authenticat
 
 The GitHub Pages build uses the browser Supabase client because GitHub Pages cannot execute Next.js middleware or server routes. `src/utils/supabase/server.ts` is ready for a future Node/Vercel deployment.
 
+## Live TMDB discovery
+
+The browser calls the `tmdb-sync` Supabase Edge Function; the TMDB secret never enters the GitHub Pages bundle. Configure and deploy it with:
+
+```bash
+supabase login
+supabase link --project-ref fiwcyteletygdkgparoz
+supabase secrets set TMDB_API_KEY=your_tmdb_read_access_token
+supabase functions deploy tmdb-sync
+```
+
+Popular, top-rated, trending, now-playing, upcoming, search, filtered discovery, and full movie details are fetched with pagination and cached into `public.titles`. The SQL migration schedules daily warm-cache refreshes with `pg_cron`; ordinary requests refresh the cache on demand.
+
 ## Verification
 
 - `npm run typecheck`
