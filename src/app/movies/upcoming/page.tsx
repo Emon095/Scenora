@@ -1,0 +1,2 @@
+import { Shell } from "@/components/Shell";import { MovieList } from "@/components/MovieList";import { movies } from "@/data/demo";
+export default function Upcoming(){return <Shell back><h1 className="page-title">Upcoming Movies</h1><div className="tabs">{["All","This Week","This Month","Next Month","Later"].map((x,i)=><button className={`pill ${i===0?"active":""}`} key={x}>{x}</button>)}</div><MovieList items={[movies[6],movies[5],movies[2],movies[1],movies[0]]}/></Shell>}

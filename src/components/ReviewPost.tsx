@@ -1,0 +1,10 @@
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import { Heart, MessageCircle, MoreHorizontal, Share2 } from "lucide-react";
+import { useState } from "react";
+import { RatingStars } from "./RatingStars";
+import type { posts } from "@/data/demo";
+
+type Post = (typeof posts)[number];
+export function ReviewPost({ post }: { post: Post }) { const [loved,setLoved]=useState(false); const [likes,setLikes]=useState(post.likes); return <article className="card review-card"><div className="post-head"><Link href={`/profile/${post.username}`}><Image className="avatar" src={post.avatar} width={55} height={55} alt={post.user}/></Link><div className="post-meta"><b>{post.user} <span className="verified">◆</span></b><div className="muted">{post.time} &nbsp;•&nbsp; Watched {post.movie.title} 🎬</div></div><button className="icon-btn"><MoreHorizontal/></button></div><Link href={`/movie/${post.movie.id}`} style={{ color:"inherit",textDecoration:"none" }}><h2 className="post-title">{post.movie.title}</h2></Link><div style={{ display:"flex",alignItems:"center",gap:18 }}><RatingStars rating={post.rating}/><span className="muted">{post.rating}/5</span></div><div className="tags">{post.tags.map(x=><span key={x}>#{x}</span>)}</div><p className="post-text">{post.text}</p><div className={`gallery ${post.images.length===1?"single":""}`}>{post.images.map((src,i)=><Image src={src} width={500} height={350} alt="Movie still" key={i}/>)}</div><div className="muted" style={{ display:"flex",justifyContent:"space-between",marginTop:14 }}><span>Naveed, Farhana and {likes-2} others</span><span>{post.comments} comments</span></div><div className="actions"><button className={`action ${loved?"loved":""}`} onClick={()=>{setLoved(!loved);setLikes(n=>n+(loved?-1:1))}}><Heart fill={loved?"currentColor":"none"}/>{likes}</button><button className="action"><MessageCircle/>{post.comments}</button><button className="action" onClick={()=>navigator.share?.({title:post.movie.title,text:post.text,url:location.href})}><Share2/>{post.shares}</button></div></article> }
