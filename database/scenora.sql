@@ -59,6 +59,7 @@ create table if not exists public.titles (
   runtime integer check (runtime is null or runtime > 0),
   certification text,
   external_rating numeric(3,1),
+  vote_count bigint not null default 0,
   popularity numeric,
   trailer_key text,
   created_at timestamptz not null default now(),
@@ -198,6 +199,11 @@ create table if not exists public.shoutbox_reactions (
   reaction text not null default 'love' check (reaction in ('love', 'fire', 'laugh')),
   primary key (message_id, user_id)
 );
+
+-- Migration-safe additions for projects that ran an earlier schema version.
+alter table public.titles add column if not exists vote_count bigint not null default 0;
+alter table public.posts add column if not exists tags text[] not null default '{}';
+alter table public.posts add column if not exists feeling text;
 
 create index if not exists posts_created_at_idx on public.posts(created_at desc);
 create index if not exists posts_author_idx on public.posts(author_id, created_at desc);

@@ -7,7 +7,7 @@ type RequestBody = { action?:string;page?:number;query?:string;year?:number;genr
 type TmdbMovie = { id:number;title:string;original_title?:string;overview?:string;poster_path?:string|null;backdrop_path?:string|null;release_date?:string;vote_average?:number;vote_count?:number;popularity?:number;genre_ids?:number[];genres?:{id:number;name:string}[];runtime?:number;imdb_id?:string;videos?:unknown;credits?:unknown;similar?:unknown;recommendations?:unknown;release_dates?:unknown };
 
 function movieRow(movie: TmdbMovie) {
-  return { tmdb_id:movie.id,imdb_id:movie.imdb_id??null,type:"movie",title:movie.title,original_title:movie.original_title??movie.title,overview:movie.overview??null,poster_path:movie.poster_path??null,backdrop_path:movie.backdrop_path??null,release_date:movie.release_date||null,runtime:movie.runtime??null,external_rating:movie.vote_average??null,popularity:movie.popularity??null,updated_at:new Date().toISOString() };
+  return { tmdb_id:movie.id,imdb_id:movie.imdb_id??null,type:"movie",title:movie.title,original_title:movie.original_title??movie.title,overview:movie.overview??null,poster_path:movie.poster_path??null,backdrop_path:movie.backdrop_path??null,release_date:movie.release_date||null,runtime:movie.runtime??null,external_rating:movie.vote_average??null,vote_count:movie.vote_count??0,popularity:movie.popularity??null,updated_at:new Date().toISOString() };
 }
 
 Deno.serve(async (request: Request) => {
