@@ -75,24 +75,47 @@ flutter run -d <device-id>
 
 The current UI uses remote poster, backdrop, and avatar URLs during normal development. The widget test switches `loadRemoteImages` off and uses `assets/images/placeholder.png`, which keeps automated tests deterministic without disabling remote images in the app.
 
-## Project structure
+## Repository and Android file structure
+
+The repository contains both the original web application and the new Flutter Android application. The Android branch is not a separate repository; it is a separate development timeline inside the same repository.
 
 ```text
-mobile/
-├── android/                      # Android host project and Gradle configuration
-├── assets/images/                # Local fallback assets used by tests
-├── docs/ARCHITECTURE.md          # Layered mobile architecture and backend mapping
-├── lib/
-│   ├── main.dart                 # Flutter entry point
-│   ├── app.dart                  # Theme, models, demo data, shell, screens, widgets
-│   └── services/
-│       └── scenora_backend.dart  # Demo/remote backend interfaces and configuration
-├── test/widget_test.dart         # Scenora launch smoke test
-├── pubspec.yaml                  # Flutter package metadata and dependencies
-└── README.md                     # This Android-specific guide
+Scenora/
+├── src/                          # Existing Next.js web application
+├── public/                       # Existing web assets
+├── database/scenora.sql          # Shared Supabase database schema
+├── design-references/            # Product and mobile UI reference images
+├── package.json                  # Web application scripts and dependencies
+└── mobile/                       # Flutter Android application
+    ├── android/                  # Android host project and Gradle configuration
+    │   ├── app/                  # Android application module and launcher config
+    │   └── gradle/               # Gradle wrapper files
+    ├── assets/images/            # Local fallback assets used by tests
+    ├── docs/ARCHITECTURE.md      # Mobile architecture and backend mapping
+    ├── lib/                      # Dart application source
+    │   ├── main.dart             # Flutter entry point
+    │   ├── app.dart              # Theme, models, demo data, shell, screens, widgets
+    │   └── services/
+    │       └── scenora_backend.dart  # Demo/remote backend interfaces and config
+    ├── test/widget_test.dart     # Scenora launch smoke test
+    ├── pubspec.yaml              # Flutter package metadata and dependencies
+    └── README.md                 # Android branch development guide
 ```
 
-The application architecture is described in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Presentation widgets should remain separate from remote data access. New backend work should be added through typed models, repository interfaces, and service adapters rather than placing Supabase or TMDB calls directly inside screens.
+### Branch ownership of the structure
+
+Both branches contain the existing repository root and web application. The Android-specific work is added under `mobile/` on `android-flutter`:
+
+```text
+main
+└── Existing Next.js web application
+
+android-flutter
+├── Existing Next.js web application
+└── mobile/                       # Flutter Android application
+```
+
+Work on the Android client from the `mobile/` directory. Keep web changes in the web project directories at the repository root, and do not move Flutter files into `src/`. Presentation widgets should remain separate from remote data access. New backend work should be added through typed models, repository interfaces, and service adapters rather than placing Supabase or TMDB calls directly inside screens.
 
 ## Backend configuration direction
 
@@ -151,9 +174,9 @@ Do not commit signing keys, keystores, passwords, `.env` files, `android/local.p
 | Images are blank offline | This is expected for demo network artwork; widget tests use the bundled placeholder asset. |
 | Supabase/TMDB values are missing | Run in demo mode or provide the optional `--dart-define` values described above. |
 
-## Branch and commit workflow
+## Android branch and commit workflow
 
-All Android work belongs on `android-flutter`. Keep the `main` branch focused on the existing web application. Before pushing, format and test the mobile project, review the diff, and commit with a focused message:
+All Android work belongs on `android-flutter`. The branch starts from the existing repository `main` branch, so it contains the web application as its base plus the `mobile/` Flutter project. Keep the web `main` branch stable and use the Android branch for Flutter, Android, and mobile documentation changes. Before pushing, format and test the mobile project, review the diff, and commit with a focused message:
 
 ```bash
 git checkout android-flutter
@@ -168,7 +191,7 @@ git commit -m "Describe the Android change"
 git push origin android-flutter
 ```
 
-Use a pull request from `android-flutter` into `main` only after the mobile change has been reviewed and the web project remains unaffected.
+Use a pull request from `android-flutter` into `main` only when you deliberately want the Android project added to the main project timeline. If the original repository maintains a separate Android branch, use `android-flutter` as the pull-request base instead. Creating or merging a pull request does not automatically delete either branch.
 
 ## Useful references
 
